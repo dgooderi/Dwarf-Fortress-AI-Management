@@ -50,12 +50,13 @@ The example results below were created with Gemini
 2. Select File - Export Current Grid View as CSV
 
 ##Put AI to work
-1. * Paste this prompt file into your favorite AI and add all of the files you exported earlier.
+1. * Paste the prompt file into your favorite AI and add all of the files you exported earlier.
 
 2. You should get a result which you can print and apply to Dwarf Fortress.
 
 ## Example Output
 
+See the example-output.md file
 
 
    
