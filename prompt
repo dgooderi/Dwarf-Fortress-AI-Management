@@ -1,140 +1,59 @@
-Dwarf Fortress Total Management Protocol (v7.1 - Siege Integration)
+Run Dwarf Fortress Management Protocol v8.6
 
-Your data on the subject of dwarf fortress in out of data and you will have to deeply research the subject in order to provide an accurate result.
+1. Configuration:
 
-Objective: Maintain a productive, legendary fortress while preventing mental breaks through data-driven Labor caps, mental resilience firewalls, and specialized siege coordination.
+Permanent Duchess: 'Lex' Sholidmafol
 
-[STATIC POSITIONS]
-Duchess: 'Lex' Sholidmafol
+Permanent King/Queen: IGNORE
 
-Mayor: [Identify based on highest social skills and Sponge Rule]
+Permanent Mayor: IGNORE
 
-Siege Lead: 'Threetoe' Likotkat
+Military: Squad 1 (10 members, Melee).
 
-Phase 1: The Identity & Integrity Filter
-Primary Key: Every dwarf must be identified by their 'Nickname' Lastname.
+Siege Battery: 5 Primaries, 5 Backups.
 
-Sync Verification: Before assigning a role, ensure the row index for the Nickname matches across: Labors Full.csv, Military.csv, Traits.csv, Needs.csv, Attributes.csv, and Roles.csv.
+Skill Floor: 5.0 for professional labor.
 
-Phase 2: The Mental Health & Social Firewall
-Calculate these "Soft Scores" using data from Traits.csv and Attributes.csv:
+2. Core Logic & Constraints:
 
-Fragility Score: Average of (Stress Vulnerability + Anxiety Propensity + Depression Propensity).
+Strict "IGNORE": If a role is set to IGNORE, do not assign anyone.
 
-Counselor Score: (Pacifier + Consoler + (Empathy from Attributes.csv / 100)).
+The "Glass" Rule: If (Stress + Anxiety + Depression) average > 60, BANNED from Military, Nobles, and Law roles.
 
-Resilience Level: Low Stress Vulnerability (< 40).
+The "Sponge" Rule: Admin/Nobles must have Stress < 60.
 
-The Hard Rules:
+The "Master" Rule: If any skill is >= 10, disable Hauling and Cleaning for that dwarf.
 
-The "Glass" Rule: Any dwarf with Fragility > 60 or Stress Vulnerability > 65 is barred from Military, Burial, Refuse Hauling, and Noble roles.
+Sabbatical Trigger: If Focus < 100 or "Socialize Need" is in the top 10% of the population, move to Sabbatical.
 
-The "Sponge" Rule: Any Noble (Mayor/Manager/Medical) MUST have a Stress Vulnerability < 60.
+Exception: Duchess and Mayor stay stationed but marked as "ON BREAK (STATIONED)".
 
-Phase 3: Labor Efficiency & Sabbaticals
-The Labor Cap: No Master (Level 10+) may be assigned to more than 3 total Labor categories.
+3. Administrative Core Priority:
+Before assigning labor, appoint these roles using highest relevant skills:
 
-The Sabbatical Rule: Identify dwarfs with Focus < 100 OR those in the lowest 10% of the "Socialize" need in Needs.csv. List them as "ON BREAK." Strip all Labors to allow for prayer, socialization, and tavern time.
+Champion: Highest Fighter/Melee.
 
-Phase 4: Assignment Hierarchy
-The Resilient Militia: Prioritize Resilience Level (Lowest Stress Vuln) over Skill.
+Captain of the Guard: Highest Discipline + Leadership.
 
-Squad 1 (Melee): 2 members.
+Dungeon Master: Highest Animal Trainer.
 
-Squad 2 (Melee): 3 members.
+Hammerer: Lowest Strength (to prevent execution deaths).
 
-Squad 3 (Marksdwarf): 4 members.
+Manager/Broker: Highest Appraiser/Organizer.
 
-Constraint: Military dwarves have NO Labors or noble roles and must pass the Glass Rule.
+Chief Medical/Bookkeeper: Highest Diagnostician/Record Keeper.
 
-The Fortress Champion: Highest weapon skill level who meets the Sponge Rule (Stress Vuln < 60).
+4. Execution & Output:
 
-The Law & Order Stack:
+Full Manifest: I want every single dwarf assigned to a table. No "partial previews."
 
-Captain of the Guard: High Discipline and Stress Vuln < 50.
+Change Tracking: Save the state. On subsequent runs, provide a "Summary of Changes" at the end.
 
-Hammerer: Low Strength (to minimize lethality) + "Cruelty" trait. Must pass the Glass Rule.
-
-The Administrative Firewall:
-
-Chief Medical Dwarf & Bookkeeper: MUST be the same dwarf. Must NOT be "Glass."
-
-Manager & Broker: MUST be the same dwarf. Highest "Appraiser" and "Organizer" skills.
-
-Dungeon Master: Highest "Animal Trainer" role score. Assign Animal Training Labor.
-
-Phase 5: The Auxiliary Siege Battery (The "Ghost" Squad)
-Siege Battery: Assign 5 Non-Military Siege Operators (highest "Siege Operator" Role Score).
-
-The Redundancy Rule: Every Primary Operator must have a designated Backup Labourer (e.g., 'Robyn' Mengotung, 'Leah' Limulokol) who is cross trained in the Operator’s civilian job.
-
-Operational Protocol: These dwarves perform civilian Labor until a siege is active. During sieges, Backups take over all workshop tasks.
-
-Phase 6: Comprehensive Labor Manifest
-Generate a structured Labor plan for the entire population:
-
-The Primary Role Rule: No manual Labors for the Duchess, Mayor, Manager/Broker, Chief Medical Dwarf, Bookkeeper, or Military.
-
-Skill Floor & Cap: For all others, enable only the top 3 Labors where skill is > 5.0. If no skill is > 5.0, assign to "Peasantry" (Hauling/Cleaning only).
-
-The Master Constraint: Masters (Level 10+) must have Hauling and Cleaning DISABLED.
-
-The "Glass" Refuse Ban: Any dwarf meeting the "Glass" Rule must have Refuse Hauling and Burial strictly DISABLED.
-
-Specialty Toggles:
-
-Animal Training: Dungeon Master only.
-
-Medical Labors: Chief Medical Dwarf and one "Resilient" backup only.
-
-Appraising/Organizing: Broker/Manager only.
-
-Phase 7: Reporting Format
-For every dwarf, use this structure:
-
-Role/Squad: [Job Title]
-
-Assigned: ['Nickname' Lastname]
-
-Primary Skill: [Highest Skill + Level]
-
-Mental Audit: [Fragility Score / Stress Vuln]
-
-Assignment Notes: (e.g., "Sabbatical: Focus Critical," "Glass: Disable Refuse," "Siege Primary: Backup is Robyn.")
-
-Phase 8: Final Output Requirements
-Output the full results of each section and not a summary.
-
-Fixed & Appointed Nobles: Name + Reasoning (cite CSV values).
-
-The Champion: Name + Weapon Type + Skill Level.
-
-Military Squads: Name + Weapon Skill Level for all squads. Ensure there is 1 dwarf per line to minimise confusion.
-
-The Siege Battery: List 5 Primaries and their designated Backups.
-
-Labor Assignment Table:
-| Name | Assigned Role | Labors to ENABLE | Labors to DISABLE | Reasoning |
-
-Civilian Masters: Grouped by industry + Skill Level.
-
-The Peasantry: Remaining dwarfs with their Stability status.
-
-Phase 9: The Global Exclusion & Comprehensive Display Rule
-To ensure the fortress manifest is 100% accurate and every dwarf is accounted for without role-contamination:
-
-Total Population Display: The final output MUST categorize every single dwarf into exactly one of these four sections: Nobles, Military, On Break, or Labors.
-
-Section Isolation (Zero-Overlap):
-
-Noble Exclusion: Any dwarf listed in the Nobles section is strictly prohibited from having any entries in the Military or Labors screens.
-
-Military Exclusion: Any dwarf in the Military section is strictly prohibited from having any entries in the Labors or Nobles screens.
-
-On Break Exclusion: Any dwarf listed as On Break (Focus < 100 or Social Need) must have ALL Labors, Military duties, and Noble roles stripped.
-
-Labor Manifest (The Remainder): The Labors section must only contain dwarves not already assigned to Nobles, Military, or On Break.
-
-Formatting: Each section must list the full names of all dwarves belonging to it to ensure easy in-game updating.
-
-Audit Note: List any dwarf whose role changed because a higher-skilled/more-resilient candidate was found.
+Tables Required: 1. High Estate & Law
+2. Militia
+3. Siege Battery
+4. Sabbatical List
+5. Metal & Stone (Mining/Smith/Mason)
+6. Agriculture & Hygiene (Grower/Brewer/Cook/Soap)
+7. Crafts & Textile (Carpenter/Clothier/Potter)
+8. The Peasantry (General Haulers)
