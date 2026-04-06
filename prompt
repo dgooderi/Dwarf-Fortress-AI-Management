@@ -1,4 +1,4 @@
-Run Dwarf Fortress Management Protocol v8.6
+Run Dwarf Fortress Management Protocol v8.7 (Full Labor Manifest)
 
 1. Configuration:
 
@@ -12,48 +12,57 @@ Military: Squad 1 (10 members, Melee).
 
 Siege Battery: 5 Primaries, 5 Backups.
 
-Skill Floor: 5.0 for professional labor.
+Skill Floor for Labors: 5.0
 
-2. Core Logic & Constraints:
+2. Screening & Health Rules:
 
-Strict "IGNORE": If a role is set to IGNORE, do not assign anyone.
+The "Glass" Rule: Avg (Stress+Anxiety+Depress) > 60. BANNED from Military/Nobles. Disable Refuse/Burial labors.
 
-The "Glass" Rule: If (Stress + Anxiety + Depression) average > 60, BANNED from Military, Nobles, and Law roles.
+The "Sponge" Rule: Nobles must have Stress < 60.
 
-The "Sponge" Rule: Admin/Nobles must have Stress < 60.
+The "Master" Rule: Any skill >= 10. Disable Hauling and Cleaning labors.
 
-The "Master" Rule: If any skill is >= 10, disable Hauling and Cleaning for that dwarf.
+Sabbatical Trigger: Focus < 100 or "Socialize Need" in the top 10% of the population. Set status to "OFF-DUTY" and Disable ALL LABORS. (Duchess/Mayor stay stationed but mark as "ON BREAK").
 
-Sabbatical Trigger: If Focus < 100 or "Socialize Need" is in the top 10% of the population, move to Sabbatical.
+3. Labor & Exemption Logic (Critical):
 
-Exception: Duchess and Mayor stay stationed but marked as "ON BREAK (STATIONED)".
+Exempt Class: Anyone in Table 1 (High Estate) or Table 2 (Militia) is strictly exempt. Enable: "EXEMPT", Disable: "ALL LABORS".
 
-3. Administrative Core Priority:
-Before assigning labor, appoint these roles using highest relevant skills:
+Worker Class: Everyone else (including Siege Operators and Sabbaticals) must have their specific labors listed.
 
-Champion: Highest Fighter/Melee.
+Enable Column Rules: * Do NOT use category names (e.g., don't say "Farming").
 
-Captain of the Guard: Highest Discipline + Leadership.
+DO use professional skill names (e.g., "Mining, Masonry, Brewing, Smithing").
 
-Dungeon Master: Highest Animal Trainer.
+List ALL skills >= 5.0.
 
-Hammerer: Lowest Strength (to prevent execution deaths).
+If no skills are >= 5.0, list "General Hauling".
 
-Manager/Broker: Highest Appraiser/Organizer.
+Siege Operators: Must be assigned to an Industry Table (5-8) to ensure they work when not at the machines.
 
-Chief Medical/Bookkeeper: Highest Diagnostician/Record Keeper.
+4. Administrative Priority:
+Appoint these roles using highest relevant skills: Champion (Fighter), Captain of the Guard (Discipline), Dungeon Master (Animal Trainer), Hammerer (Lowest Strength), Manager/Broker (Appraiser), Chief Medical/Bookkeeper (Diagnostician).
 
-4. Execution & Output:
+5. Execution & Output:
 
-Full Manifest: I want every single dwarf assigned to a table. No "partial previews."
+Full Manifest: Every single dwarf in the CSV must appear in exactly one of these 8 tables.
 
-Change Tracking: Save the state. On subsequent runs, provide a "Summary of Changes" at the end.
+Change Tracking: Save the current state. Compare against previous_assignments.json and provide a "Summary of Changes" at the end of the report.
 
-Tables Required: 1. High Estate & Law
-2. Militia
-3. Siege Battery
-4. Sabbatical List
-5. Metal & Stone (Mining/Smith/Mason)
-6. Agriculture & Hygiene (Grower/Brewer/Cook/Soap)
-7. Crafts & Textile (Carpenter/Clothier/Potter)
+Table Order: 1. High Estate (Exempt)
+2. Militia (Exempt)
+3. Siege Battery (List names and Primary/Backup role)
+4. Sabbatical (Reason, Enable, Disable)
+5. Metal & Stone (Mining, Smithing, Engraving)
+6. Agriculture & Hygiene (Farming, Brewing, Cooking, Soapmaking)
+7. Crafts & Textile (Carpentry, Clothier, Potter, Masonry, Mechanics)
 8. The Peasantry (General Haulers)
+
+What makes this version different:
+Professional Naming: It explicitly tells the AI to use professional skill names (Masonry, Brewing) instead of industry names (Metal, Agriculture).
+
+The Siege "Double-Entry": It ensures that while you see your Siege team in Table 3, they are also assigned actual work in Tables 5-8.
+
+Comprehensive Labor Check: It forces the "General Hauling" label for dwarves with no notable skills, so no one is left "Unassigned."
+
+State Persistence: It reminds the AI to look for the JSON file to tell you who moved where.
