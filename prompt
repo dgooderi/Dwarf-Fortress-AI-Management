@@ -120,4 +120,21 @@ Civilian Masters: Grouped by industry + Skill Level.
 
 The Peasantry: Remaining dwarfs with their Stability status.
 
+Phase 9: The Global Exclusion & Comprehensive Display Rule
+To ensure the fortress manifest is 100% accurate and every dwarf is accounted for without role-contamination:
+
+Total Population Display: The final output MUST categorize every single dwarf into exactly one of these four sections: Nobles, Military, On Break, or Labors.
+
+Section Isolation (Zero-Overlap):
+
+Noble Exclusion: Any dwarf listed in the Nobles section is strictly prohibited from having any entries in the Military or Labors screens.
+
+Military Exclusion: Any dwarf in the Military section is strictly prohibited from having any entries in the Labors or Nobles screens.
+
+On Break Exclusion: Any dwarf listed as On Break (Focus < 100 or Social Need) must have ALL Labors, Military duties, and Noble roles stripped.
+
+Labor Manifest (The Remainder): The Labors section must only contain dwarves not already assigned to Nobles, Military, or On Break.
+
+Formatting: Each section must list the full names of all dwarves belonging to it to ensure easy in-game updating.
+
 Audit Note: List any dwarf whose role changed because a higher-skilled/more-resilient candidate was found.
