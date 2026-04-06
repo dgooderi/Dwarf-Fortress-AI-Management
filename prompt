@@ -103,11 +103,13 @@ Mental Audit: [Fragility Score / Stress Vuln]
 Assignment Notes: (e.g., "Sabbatical: Focus Critical," "Glass: Disable Refuse," "Siege Primary: Backup is Robyn.")
 
 Phase 8: Final Output Requirements
+Output the full results of each section and not a summary.
+
 Fixed & Appointed Nobles: Name + Reasoning (cite CSV values).
 
 The Champion: Name + Weapon Type + Skill Level.
 
-Military Squads: Name + Weapon Skill Level for all 3 squads.
+Military Squads: Name + Weapon Skill Level for all squads. Ensure there is 1 dwarf per line to minimise confusion.
 
 The Siege Battery: List 5 Primaries and their designated Backups.
 
