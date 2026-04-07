@@ -1,68 +1,76 @@
-Run Dwarf Fortress Management Protocol v8.7 (Full Labor Manifest)
+TOTAL MANAGEMENT PROTOCOL
+[1] CONFIGURATION: PERMANENT ROLES, SQUADS & MINIMUMS
+Python
+# --- NOBLE ASSIGNMENTS ---
+# Name must match CSV exactly. If empty "", the system auto-assigns the best candidate.
+PERMANENT_ASSIGNMENTS = {
+    'Manager': "'Cypress' Mersethmonom",
+    'Broker': "'Cypress' Mersethmonom",
+    'Bookkeeper': "'Val' Darłdbim",
+    'Chief Medical Dwarf': "",
+    'Mayor': "",
+    'Militia Commander': "",
+    'Captain of the Guard': "",
+    'Hammerer': "",
+    'Champion': "",
+    'Dungeon Master': "",
+}
 
-1. Configuration:
+# --- SQUAD DEFINITIONS ---
+# id: Squad # | size: members | type: 'melee' or 'marksdwarf'
+SQUAD_CONFIG = [
+    {'id': 1, 'size': 3, 'type': 'melee'},
+    {'id': 2, 'size': 5, 'type': 'marksdwarf'},
+]
 
-Permanent Duchess: 'Lex' Sholidmafol
+# --- LABOR MINIMUMS ---
+# Forces a minimum number of dwarves into these groups, even if it's not their top skill.
+# Priority: [C] > [E] > [D] > [F]
+MINIMUM_COUNTS = {
+    "[C] HARVESTERS": 4,
+    "[D] ARTISANS": 10,
+    "[E] SUSTAINMENT": 6,
+    "[F] ORDERLIES": 2
+}
 
-Permanent King/Queen: IGNORE
+# --- UNLOCKED ROLES ---
+# Add roles here to prevent auto-assignment if you haven't unlocked them in-game yet.
+IGNORE_IF_NOT_MANUAL = [
+    # 'Hammerer',
+    # 'Dungeon Master',
+]
+[2] DATA PROCESSING LOGIC
+Data Sanitization (Anti-Hallucination):
 
-Permanent Mayor: IGNORE
+Null Filter: Treat any value in the "Needs" columns greater than 1,000,000 as 0 (removes the 2e9 export artifact).
 
-Military: Squad 1 (10 members, Melee).
+Skill Floor: Treat any negative skill value (e.g., -1) as 0.
 
-Siege Battery: 5 Primaries, 5 Backups.
+Masonry Alias: Use the highest value among Stone Carver, Stone Crafter, and Stonecutter for all Masonry roles.
 
-Skill Floor for Labors: 5.0
+Drafting Priority:
 
-2. Screening & Health Rules:
+Phase 1: Nobles. Assign from PERMANENT_ASSIGNMENTS first, then auto-fill empty roles (if not ignored) using sanitized skills.
 
-The "Glass" Rule: Avg (Stress+Anxiety+Depress) > 60. BANNED from Military/Nobles. Disable Refuse/Burial labors.
+Phase 2: Military. Fill SQUAD_CONFIG using the remaining population. Melee: (Axe, Spear, Sword, Mace, Hammer, Fighter). Marksdwarf: (Archer, Crossbowman).
 
-The "Sponge" Rule: Nobles must have Stress < 60.
+Phase 3: Minimums. Check MINIMUM_COUNTS. If a group is under-staffed, draft the best available remaining dwarves. Active dwarves (those not in recovery) must be prioritized for these slots to ensure the fortress functions.
 
-The "Master" Rule: Any skill >= 10. Disable Hauling and Cleaning labors.
+Phase 4: The Rest. Assign all remaining dwarves to their highest-scoring labor group. If a dwarf has no skills > 0, place in [G] SUPPORT.
 
-Sabbatical Trigger: Focus < 100 or "Socialize Need" in the top 10% of the population. Set status to "OFF-DUTY" and Disable ALL LABORS. (Duchess/Mayor stay stationed but mark as "ON BREAK").
+Offline Protocol:
 
-3. Labor & Exemption Logic (Critical):
+A dwarf is "Offline" if any sanitized Need value is negative (e.g., -10,000) or total stress is high.
 
-Exempt Class: Anyone in Table 1 (High Estate) or Table 2 (Militia) is strictly exempt. Enable: "EXEMPT", Disable: "ALL LABORS".
+Laborers/Military: Move to status "Recovering" (Logic: Disable all labors).
 
-Worker Class: Everyone else (including Siege Operators and Sabbaticals) must have their specific labors listed.
+Nobles: Remain in Group [A] but mark as "On Break".
 
-Enable Column Rules: * Do NOT use category names (e.g., don't say "Farming").
+[3] REQUIRED OUTPUT
+STRICT RULE: Do not save results to .csv files. All tables must be printed directly in the chat response as Markdown tables. Provide:
 
-DO use professional skill names (e.g., "Mining, Masonry, Brewing, Smithing").
+ADMINISTRATION (NOBLES): Name, Position, Status, and the specific Need causing a break.
 
-List ALL skills >= 5.0.
+MILITARY (SQUADS): Name, Squad ID/Type, Status, and Primary Need.
 
-If no skills are >= 5.0, list "General Hauling".
-
-Siege Operators: Must be assigned to an Industry Table (5-8) to ensure they work when not at the machines.
-
-4. Administrative Priority:
-Appoint these roles using highest relevant skills: Champion (Fighter), Captain of the Guard (Discipline), Dungeon Master (Animal Trainer), Hammerer (Lowest Strength), Manager/Broker (Appraiser), Chief Medical/Bookkeeper (Diagnostician).
-
-5. Execution & Output:
-
-Full Manifest: Every single dwarf in the CSV must appear in exactly one of these 8 tables.
-
-Change Tracking: Save the current state. Compare against previous_assignments.json and provide a "Summary of Changes" at the end of the report.
-
-Table Order: 1. High Estate (Exempt)
-2. Militia (Exempt)
-3. Siege Battery (List names and Primary/Backup role)
-4. Sabbatical (Reason, Enable, Disable)
-5. Metal & Stone (Mining, Smithing, Engraving)
-6. Agriculture & Hygiene (Farming, Brewing, Cooking, Soapmaking)
-7. Crafts & Textile (Carpentry, Clothier, Potter, Masonry, Mechanics)
-8. The Peasantry (General Haulers)
-
-What makes this version different:
-Professional Naming: It explicitly tells the AI to use professional skill names (Masonry, Brewing) instead of industry names (Metal, Agriculture).
-
-The Siege "Double-Entry": It ensures that while you see your Siege team in Table 3, they are also assigned actual work in Tables 5-8.
-
-Comprehensive Labor Check: It forces the "General Hauling" label for dwarves with no notable skills, so no one is left "Unassigned."
-
-State Persistence: It reminds the AI to look for the JSON file to tell you who moved where.
+FORTRESS LABOR: Name, Home Group, Status (Active vs. Recovering), and the Primary Labor category.
