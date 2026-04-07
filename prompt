@@ -24,7 +24,7 @@ SQUAD_CONFIG = [
 ]
 
 # --- LABOR MINIMUMS ---
-# Forces a minimum number of dwarves into these groups, even if it's not their top skill.
+# Forces a minimum number of dwarves into these groups.
 # Priority: [C] > [E] > [D] > [F]
 MINIMUM_COUNTS = {
     "[C] HARVESTERS": 4,
@@ -34,40 +34,50 @@ MINIMUM_COUNTS = {
 }
 
 # --- UNLOCKED ROLES ---
-# Add roles here to prevent auto-assignment if you haven't unlocked them in-game yet.
 IGNORE_IF_NOT_MANUAL = [
     # 'Hammerer',
-    # 'Dungeon Master',
 ]
-[2] DATA PROCESSING LOGIC
+[2] DATA PROCESSING LOGIC & SKILL MAPPING
 Data Sanitization (Anti-Hallucination):
 
-Null Filter: Treat any value in the "Needs" columns greater than 1,000,000 as 0 (removes the 2e9 export artifact).
+Null Filter: Treat any "Needs" value > 1,000,000 as 0.
 
 Skill Floor: Treat any negative skill value (e.g., -1) as 0.
 
-Masonry Alias: Use the highest value among Stone Carver, Stone Crafter, and Stonecutter for all Masonry roles.
+Masonry Alias: Use the highest value among Stone Carver, Stone Crafter, and Stonecutter.
+
+Labor Group Definitions (The Mapping):
+
+[C] HARVESTERS: Miner, Wood Cutter, Ambusher (Hunting).
+
+[D] ARTISANS: Armorsmith, Weaponsmith, Metalsmith, Metal Crafter, Masonry (see alias), Carpenter, Mechanic, Clothier, Leatherworker, Glassmaker, Potter, Glazer, Bowyer, Weaver, Gem Cutter, Gem Setter, Wood Crafter, Bone Carver.
+
+[E] SUSTAINMENT: Grower, Brewer, Cook, Butcher, Thresher, Cheesemaker, Milker, Miller, Lye Maker, Soaper, Potash Maker, Dyer, Herbalist, Tanner, Fisherman, Fish Cleaner.
+
+[F] ORDERLIES: Diagnostician, Surgeon, Bone Doctor, Suturer, Wound Dresser.
+
+[G] SUPPORT: Default group for any dwarf with no skills or not assigned above (Hauling/Cleaning focus).
 
 Drafting Priority:
 
-Phase 1: Nobles. Assign from PERMANENT_ASSIGNMENTS first, then auto-fill empty roles (if not ignored) using sanitized skills.
+Phase 1: Nobles. Assign from PERMANENT_ASSIGNMENTS first, then auto-fill empty roles using relevant skills (e.g., Organizer for Manager).
 
-Phase 2: Military. Fill SQUAD_CONFIG using the remaining population. Melee: (Axe, Spear, Sword, Mace, Hammer, Fighter). Marksdwarf: (Archer, Crossbowman).
+Phase 2: Military. Fill SQUAD_CONFIG. Melee: (Axe, Spear, Sword, Mace, Hammer, Fighter). Marksdwarf: (Archer, Crossbowman).
 
-Phase 3: Minimums. Check MINIMUM_COUNTS. If a group is under-staffed, draft the best available remaining dwarves. Active dwarves (those not in recovery) must be prioritized for these slots to ensure the fortress functions.
+Phase 3: Minimums. If MINIMUM_COUNTS aren't met, draft the best available dwarves. Active dwarves (those not in recovery) MUST be prioritized for these slots.
 
-Phase 4: The Rest. Assign all remaining dwarves to their highest-scoring labor group. If a dwarf has no skills > 0, place in [G] SUPPORT.
+Phase 4: Optimization. Assign all remaining dwarves to the group where they have the highest skill score.
 
 Offline Protocol:
 
 A dwarf is "Offline" if any sanitized Need value is negative (e.g., -10,000) or total stress is high.
 
-Laborers/Military: Move to status "Recovering" (Logic: Disable all labors).
+Laborers/Military: Move to status "Recovering".
 
-Nobles: Remain in Group [A] but mark as "On Break".
+Nobles: Mark as "On Break".
 
 [3] REQUIRED OUTPUT
-STRICT RULE: Do not save results to .csv files. All tables must be printed directly in the chat response as Markdown tables. Provide:
+STRICT RULE: Do not save results to .csv files. All tables must be printed directly in the chat response as Markdown tables.
 
 ADMINISTRATION (NOBLES): Name, Position, Status, and the specific Need causing a break.
 
