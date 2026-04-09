@@ -1,86 +1,104 @@
-TOTAL MANAGEMENT PROTOCOL
+Based on your latest rework of the labor groups and configuration targets, your current TOTAL MANAGEMENT PROTOCOL is as follows.
+
+This version (V7.0) uses your specific hierarchy and terminology, ensuring that specialized tasks like Lever Operation and Refuse Hauling are properly categorized.
+
+TOTAL MANAGEMENT PROTOCOL (V7.0)
 [1] CONFIGURATION: PERMANENT ROLES, SQUADS & MINIMUMS
 Python
 # --- NOBLE ASSIGNMENTS ---
-# Name must match CSV exactly. If empty "", the system auto-assigns the best candidate.
+# Names must match CSV exactly.
 PERMANENT_ASSIGNMENTS = {
+    'Duchy': "'Lex' Sholidmafol",
+    'Mayor': "'Shadow' Nomalgakiz",
     'Manager': "'Cypress' Mersethmonom",
     'Broker': "'Cypress' Mersethmonom",
     'Bookkeeper': "'Val' Darłdbim",
     'Chief Medical Dwarf': "",
-    'Mayor': "",
-    'Militia Commander': "",
+    'Champion': "",
     'Captain of the Guard': "",
     'Hammerer': "",
-    'Champion': "",
     'Dungeon Master': "",
 }
 
 # --- SQUAD DEFINITIONS ---
-# id: Squad # | size: members | type: 'melee' or 'marksdwarf'
 SQUAD_CONFIG = [
-    {'id': 1, 'size': 3, 'type': 'melee'},
-    {'id': 2, 'size': 5, 'type': 'marksdwarf'},
+    {'id': 1, 'size': 10, 'type': 'melee'}
 ]
 
-# --- LABOR MINIMUMS ---
-# Forces a minimum number of dwarves into these groups.
-# Priority: [C] > [E] > [D] > [F]
+# --- LABOR MINIMUMS & INDUSTRY TARGETS ---
+# Priority logic: [WO] > [ST] > [ME] > [GE] > [CL] > [FO] > [PR] > [EN] > [MA] > [HE] > [PA] > [CO] > [HA] > [SC]
 MINIMUM_COUNTS = {
-    "[C] HARVESTERS": 4,
-    "[D] ARTISANS": 10,
-    "[E] SUSTAINMENT": 6,
-    "[F] ORDERLIES": 2
+    "[WO] Wood": 2,          # Focus: Carpentry
+    "[ST] Stone": 2,         # Focus: Masonry
+    "[ME] Metal": 5,         # Focus: Smiths/Furnace
+    "[GE] Gems": 2,          # Focus: Cutters/Setters
+    "[CL] Clothing": 3,      # Focus: Clothes/Leather
+    "[FO] Food": 3,          # Focus: Farming/Processing
+    "[PR] Preparer": 2,      # Focus: Cook/Brewer
+    "[EN] Engraver": 1,      # Focus: Engraving
+    "[MA] Machine": 5,       # Focus: Mechanics/Levers
+    "[HE] Health": 2,        # Focus: Hospital/Patients
+    "[PA] Books": 2,         # Focus: Binding/Paper
+    "[CO] Construction": 3,  # Focus: Building/Roads
+    "[HA] Hauling": 5,       # Focus: All Logistics
+    "[SC] Support Cleaning": 2 # Focus: Cleaning/Burial
 }
-
-# --- UNLOCKED ROLES ---
-IGNORE_IF_NOT_MANUAL = [
-    # 'Hammerer',
-]
-[2] DATA PROCESSING LOGIC & SKILL MAPPING
-Data Sanitization (Anti-Hallucination):
+[2] DATA PROCESSING & LABOR DEFINITIONS
+Data Sanitization:
 
 Null Filter: Treat any "Needs" value > 1,000,000 as 0.
 
 Skill Floor: Treat any negative skill value (e.g., -1) as 0.
 
-Masonry Alias: Use the highest value among Stone Carver, Stone Crafter, and Stonecutter.
+Alias Mapping: * Blacksmithing = Metalsmith.
 
-Labor Group Definitions (The Mapping):
+Armoring = Armorsmith.
 
-[C] HARVESTERS: Miner, Wood Cutter, Ambusher (Hunting).
+Farming (Fields) = Grower.
 
-[D] ARTISANS: Armorsmith, Weaponsmith, Metalsmith, Metal Crafter, Masonry (see alias), Carpenter, Mechanic, Clothier, Leatherworker, Glassmaker, Potter, Glazer, Bowyer, Weaver, Gem Cutter, Gem Setter, Wood Crafter, Bone Carver.
+Crossbow Making = Bowyer.
 
-[E] SUSTAINMENT: Grower, Brewer, Cook, Butcher, Thresher, Cheesemaker, Milker, Miller, Lye Maker, Soaper, Potash Maker, Dyer, Herbalist, Tanner, Fisherman, Fish Cleaner.
+Labor Group Definitions:
 
-[F] ORDERLIES: Diagnostician, Surgeon, Bone Doctor, Suturer, Wound Dresser.
+[AN] Animal: Animal Care, Animal Training.
 
-[G] SUPPORT: Default group for any dwarf with no skills or not assigned above (Hauling/Cleaning focus).
+[PA] Books: Bookbinding, Papermaking, Pressing.
 
-Drafting Priority:
+[CL] Clothing: Clothesmaking (Clothier), Dyeing, Leatherworking, Shearing, Spinning, Weaving, Tanning.
 
-Phase 1: Nobles. Assign from PERMANENT_ASSIGNMENTS first, then auto-fill empty roles using relevant skills (e.g., Organizer for Manager).
+[CO] Construction: Construction, Deconstruction, Road Building.
 
-Phase 2: Military. Fill SQUAD_CONFIG. Melee: (Axe, Spear, Sword, Mace, Hammer, Fighter). Marksdwarf: (Archer, Crossbowman).
+[EN] Engraver: Engraving.
 
-Phase 3: Minimums. If MINIMUM_COUNTS aren't met, draft the best available dwarves. Active dwarves (those not in recovery) MUST be prioritized for these slots.
+[FI] Fishing: Fish Cleaning, Fish Dissection, Fishing.
 
-Phase 4: Optimization. Assign all remaining dwarves to the group where they have the highest skill score.
+[FO] Food: Bee Keeping, Cheesemaking, Farming (Fields), Lye Making, Milking, Milling, Plant Gathering (Herbalist), Plant Processing (Thresher).
 
-Offline Protocol:
+[GE] Gems: Gem Cutting, Gem Setting.
 
-A dwarf is "Offline" if any sanitized Need value is negative (e.g., -10,000) or total stress is high.
+[HA] Hauling: Food Hauling, Furniture Hauling, Item Hauling, Push/Haul Vehicles, Refuse Hauling, Stone Hauling, Water Hauling, Wood Hauling.
 
-Laborers/Military: Move to status "Recovering".
+[HE] Health: Diagnosis, Dressing Wounds, Setting Bones, Surgery, Suturing, Feed Patients/Prisoners, Recovering Wounded.
 
-Nobles: Mark as "On Break".
+[MA] Machine: Mechanics, Furnace Operating, Pump Operating, Siege Operating, Siege Engineer, Lever Operation.
+
+[ME] Metal: Armoring, Blacksmithing, Furnace Operating, Metalcrafting, Weaponsmithing.
+
+[PR] Preparer: Brewing, Butchery, Cooking.
+
+[ST] Stone: Masonry, Stone Carving, Stonecrafting, Stonecutting.
+
+[SC] Support Cleaning: Burial, Cleaning.
+
+[WO] Wood: Bone Carving, Carpentry, Crossbow Making, Potash Making, Wood Burning, Wood Cutting, Woodcrafting.
+
+[OFFLINE]: Zero labors assigned. Exclusive status for Recovering/Break dwarves.
 
 [3] REQUIRED OUTPUT
-STRICT RULE: Do not save results to .csv files. All tables must be printed directly in the chat response as Markdown tables.
+STRICT RULE: All tables must be printed directly in Markdown.
 
-ADMINISTRATION (NOBLES): Name, Position, Status, and the specific Need causing a break.
+ADMINISTRATION (NOBLES): Name, Position, Status, and specific Need causing a break.
 
 MILITARY (SQUADS): Name, Squad ID/Type, Status, and Primary Need.
 
-FORTRESS LABOR: Name, Home Group, Status (Active vs. Recovering), and the Primary Labor category.
+FORTRESS LABOR: Name, Home Group, Status (Active vs. Recovering), and Primary Labor category.
